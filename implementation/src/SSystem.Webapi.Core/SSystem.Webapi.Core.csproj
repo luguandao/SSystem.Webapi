@@ -43,9 +43,13 @@
   <ItemGroup>
     <Compile Include="MethodType.cs" />
     <Compile Include="Posters\HttpPost.cs" />
+    <Compile Include="PostException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Posters\HttpGet.cs" />
     <Compile Include="HttpPoster.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SSystem.Webapi.Core.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

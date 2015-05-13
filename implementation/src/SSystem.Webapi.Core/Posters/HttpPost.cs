@@ -24,12 +24,12 @@ namespace SSystem.Webapi.Core.Posters
                 var content=new FormUrlEncodedContent(NameValues);
 
                 //content.Headers.ContentType=new MediaTypeHeaderValue("application/json");
-                return client.PostAsync(_baseUrl + subUrl, content).Result.Content.ReadAsStringAsync();
+                return client.PostAsync(BaseUrl + subUrl, content).Result.Content.ReadAsStringAsync();
             }
 
         }
 
-        public override string Post(string subUrl)
+        protected override string _Post(string subUrl)
         {
             var r = PostAsync(subUrl);
             r.Wait(WaitTimeout);

@@ -12,7 +12,7 @@ namespace SSystem.Webapi.Core.Posters
     {
         public override async Task<string> PostAsync(string subUrl)
         {
-            var url = _baseUrl + subUrl;
+            var url = BaseUrl + subUrl;
             var er = NameValues.GetEnumerator();
 
             StringBuilder sb = new StringBuilder();
@@ -33,7 +33,7 @@ namespace SSystem.Webapi.Core.Posters
             }
         }
 
-        public override string Post(string subUrl)
+        protected override string _Post(string subUrl)
         {
             var r = PostAsync(subUrl);
             r.Wait(WaitTimeout);
