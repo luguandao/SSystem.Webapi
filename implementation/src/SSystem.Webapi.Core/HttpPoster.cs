@@ -79,13 +79,9 @@ namespace SSystem.Webapi.Core
             return null;
         }
 
-        public StandardResult<T> Post<T>(string subUrl)
+        public T Post<T>(string subUrl)
         {
-            //return new StandardResult<T>(  JsonConvert.DeserializeObject<T>(Post(subUrl));
-            return new StandardResult<T>
-            {
-                Data = JsonConvert.DeserializeObject<T>(Post(subUrl))
-            };
+            return JsonConvert.DeserializeObject<T>(Post(subUrl));
         }
 
         protected Dictionary<string, string> NameValues = new Dictionary<string, string>();
