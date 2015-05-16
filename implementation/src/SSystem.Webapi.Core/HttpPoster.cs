@@ -7,6 +7,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using SSystem.Webapi.Core.Models;
 using SSystem.Webapi.Core.Posters;
 
 namespace SSystem.Webapi.Core
@@ -22,7 +25,7 @@ namespace SSystem.Webapi.Core
         public event EventHandler<EventArgs> Completed;
         public event EventHandler<PostExceptionEventArg> Error;
 
-        private System.Diagnostics.Stopwatch _stopwatch;
+        private Stopwatch _stopwatch;
 
         public TimeSpan SpendTime { get; private set; }
 
@@ -76,8 +79,13 @@ namespace SSystem.Webapi.Core
             return null;
         }
 
-        protected HttpPoster()
+        public StandardResult<T> Post<T>(string subUrl)
         {
+            //return new StandardResult<T>(  JsonConvert.DeserializeObject<T>(Post(subUrl));
+            return new StandardResult<T>
+            {
+                Data = JsonConvert.DeserializeObject<T>(Post(subUrl))
+            };
         }
 
         protected Dictionary<string, string> NameValues = new Dictionary<string, string>();
