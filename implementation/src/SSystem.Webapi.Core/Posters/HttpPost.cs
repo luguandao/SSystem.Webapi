@@ -13,10 +13,16 @@ namespace SSystem.Webapi.Core.Posters
                 
                 client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
                 
-                var content=new FormUrlEncodedContent(NameValues);
+               // var content=new FormUrlEncodedContent(NameValues);
 
-                //content.Headers.ContentType=new MediaTypeHeaderValue("application/json");
-                return client.PostAsync(BaseUrl + subUrl, content).Result.Content.ReadAsStringAsync();
+                var request = new HttpRequestMessage(HttpMethod.Post, BaseUrl + subUrl);
+                if (!string.IsNullOrWhiteSpace(SessionId))
+                {
+                    request.Headers.Add("Cookie", string.Format("{0}={1}", SessionName, SessionId));
+                }
+                request.Content = new FormUrlEncodedContent(NameValues);
+               // return client.PostAsync(BaseUrl + subUrl, content).Result.Content.ReadAsStringAsync();
+                return client.SendAsync(request).Result.Content.ReadAsStringAsync();
             }
 
         }
@@ -28,6 +34,26 @@ namespace SSystem.Webapi.Core.Posters
             return r.Result;
         }
 
-      
+        protected override byte[] _PostForResponse(string subUrl)
+        {
+            using (var client = new HttpClient())
+            {
+                client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
+
+                var content = new FormUrlEncodedContent(NameValues);
+
+                var request = new HttpRequestMessage(HttpMethod.Post, BaseUrl + subUrl);
+                if (!string.IsNullOrWhiteSpace(SessionId))
+                {
+                    request.Headers.Add("Cookie", string.Format("{0}={1}", SessionName, SessionId));
+                }
+                request.Content = content;
+                var task = client.SendAsync(request);
+
+               // var task = client.PostAsync(BaseUrl + subUrl, content);
+                task.Wait(WaitTimeout);
+                return task.Result.Content.ReadAsByteArrayAsync().Result;
+            }
+        }
     }
 }
