@@ -84,7 +84,6 @@ namespace SSystem.Webapi.Core
             }
         }
 
-
         protected abstract string _Post(string subUrl);
         protected abstract byte[] _PostForResponse(string subUrl);
 
@@ -115,7 +114,8 @@ namespace SSystem.Webapi.Core
             {
                 OnStarting();
                 _stopwatch = Stopwatch.StartNew();
-                return _Post(subUrl);
+                ResultContent = _Post(subUrl);
+                return ResultContent;
             }
             catch (Exception ex)
             {
@@ -171,6 +171,8 @@ namespace SSystem.Webapi.Core
             return Create(baseUrl, type, null);
         }
 
-
+        #region 返回结果
+        public string ResultContent { get; set; }
+        #endregion
     }
 }
