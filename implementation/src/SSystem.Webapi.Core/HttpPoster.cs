@@ -19,6 +19,7 @@ namespace SSystem.Webapi.Core
 {
     public abstract class HttpPoster
     {
+        public readonly string UniqueNumber = Guid.NewGuid().ToString();
         public static readonly int WaitTimeout = int.Parse(ConfigurationManager.AppSettings["waitTimeout"] ?? "10") * 1000;
         public MethodType Type { get; private set; }
         protected string BaseUrl;
@@ -52,7 +53,7 @@ namespace SSystem.Webapi.Core
         {
             if (Error != null)
             {
-                while (e.InnerException!=null)
+                while (e.InnerException != null)
                 {
                     e = e.InnerException;
                 }
@@ -70,7 +71,7 @@ namespace SSystem.Webapi.Core
             {
                 var hc = cookies[i];
                 if (hc == null) continue;
-        
+
                 CookiesContainer.Add(new Cookie
                 {
                     Domain = hc.Domain,
@@ -143,7 +144,7 @@ namespace SSystem.Webapi.Core
             return this;
         }
 
-        public static HttpPoster Create(string baseUrl, MethodType type,EventHandler<PostExceptionEventArg> exceptionAction)
+        public static HttpPoster Create(string baseUrl, MethodType type, EventHandler<PostExceptionEventArg> exceptionAction)
         {
             if (string.IsNullOrWhiteSpace(baseUrl))
                 throw new ArgumentException("baseUrl cannot be empty.");
