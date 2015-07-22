@@ -12,16 +12,8 @@ namespace SSystem.Webapi.Core.Posters
     {
         public override async Task<string> PostAsync(string subUrl)
         {
-            var url = BaseUrl + subUrl;
-            var er = NameValues.GetEnumerator();
-
-            StringBuilder sb = new StringBuilder();
-            while (er.MoveNext())
-            {
-                if (sb.Length > 0)
-                    sb.Append("&");
-                sb.Append(er.Current.Key + "=" + er.Current.Value);
-            }
+            var url = BaseUrl + AttachParametersToSubUrl(subUrl);
+            
             using (var handler = new HttpClientHandler {UseCookies = true})
             {
                 if (CookiesContainer != null)
@@ -31,11 +23,7 @@ namespace SSystem.Webapi.Core.Posters
                 using (var client = new HttpClient(handler))
                 {
                     client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
-                    if (sb.Length > 0)
-                    {
-                        url += "?" + sb;
-                    }
-           
+                              
                     var request = new HttpRequestMessage(HttpMethod.Get, url);
                     if (!string.IsNullOrWhiteSpace(SessionId))
                     {
@@ -46,8 +34,6 @@ namespace SSystem.Webapi.Core.Posters
                     CookiesContainer = handler.CookieContainer;
 
                     var content = await res.ReadAsStringAsync();
-
-
                     return content;
                 }
             }
@@ -98,6 +84,37 @@ namespace SSystem.Webapi.Core.Posters
 
                 }
             }
+        }
+
+        protected virtual string AttachParametersToSubUrl(string subUrl)
+        {
+            if (subUrl.IndexOf('{') > -1 && subUrl.IndexOf('}') > -1)
+            {
+                StringBuilder sb1 = new StringBuilder(subUrl);
+                var er1 = NameValues.GetEnumerator();
+                while (er1.MoveNext())
+                {
+                    sb1.Replace(string.Format("{{{0}}}",er1.Current.Key), er1.Current.Value);
+                }
+                subUrl = sb1.ToString(); sb1.Clear();
+            }
+            else
+            {
+                var er = NameValues.GetEnumerator();
+
+                StringBuilder sb = new StringBuilder();
+                while (er.MoveNext())
+                {
+                    if (sb.Length > 0)
+                        sb.Append("&");
+                    sb.Append(er.Current.Key + "=" + er.Current.Value);
+                }
+                if (sb.Length > 0)
+                {
+                    subUrl += "?" + sb.ToString();
+                }
+            }
+            return subUrl;
         }
     }
 }
