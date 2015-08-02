@@ -29,6 +29,9 @@ namespace SSystem.Webapi.Core.Posters
                     {
                         request.Headers.Add("Cookie", string.Format("{0}={1}", SessionName, SessionId));
                     }
+
+                    AddHeaders(request);
+
                     var res = client.SendAsync(request).Result.Content;
 
                     CookiesContainer = handler.CookieContainer;
@@ -86,35 +89,6 @@ namespace SSystem.Webapi.Core.Posters
             }
         }
 
-        protected virtual string AttachParametersToSubUrl(string subUrl)
-        {
-            if (subUrl.IndexOf('{') > -1 && subUrl.IndexOf('}') > -1)
-            {
-                StringBuilder sb1 = new StringBuilder(subUrl);
-                var er1 = NameValues.GetEnumerator();
-                while (er1.MoveNext())
-                {
-                    sb1.Replace(string.Format("{{{0}}}",er1.Current.Key), er1.Current.Value);
-                }
-                subUrl = sb1.ToString(); sb1.Clear();
-            }
-            else
-            {
-                var er = NameValues.GetEnumerator();
-
-                StringBuilder sb = new StringBuilder();
-                while (er.MoveNext())
-                {
-                    if (sb.Length > 0)
-                        sb.Append("&");
-                    sb.Append(er.Current.Key + "=" + er.Current.Value);
-                }
-                if (sb.Length > 0)
-                {
-                    subUrl += "?" + sb.ToString();
-                }
-            }
-            return subUrl;
-        }
+       
     }
 }

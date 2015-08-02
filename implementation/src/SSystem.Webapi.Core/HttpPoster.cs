@@ -22,6 +22,9 @@ namespace SSystem.Webapi.Core
         public readonly string UniqueNumber = Guid.NewGuid().ToString();
         public static readonly int WaitTimeout = int.Parse(ConfigurationManager.AppSettings["waitTimeout"] ?? "10") * 1000;
         public MethodType Type { get; private set; }
+
+        protected Dictionary<string, string> _headers = new Dictionary<string, string>();
+
         protected string BaseUrl;
         public abstract Task<string> PostAsync(string subUrl);
 
@@ -85,6 +88,15 @@ namespace SSystem.Webapi.Core
             }
         }
 
+        public HttpPoster AddHeader(string name, string value)
+        {
+            if (!_headers.ContainsKey(name))
+            {
+                _headers.Add(name, value);
+            }
+            return this;
+        }
+
         protected abstract string _Post(string subUrl);
         protected abstract byte[] _PostForResponse(string subUrl);
 
@@ -136,12 +148,60 @@ namespace SSystem.Webapi.Core
             return JsonConvert.DeserializeObject<T>(Post(subUrl));
         }
 
+        public virtual HttpPoster AddAttachment(string fileFullPath)
+        {
+            return this;
+        }
+
         protected Dictionary<string, string> NameValues = new Dictionary<string, string>();
 
         public HttpPoster AddParameter(string name, string value)
         {
             NameValues.Add(name, value);
             return this;
+        }
+
+        protected void AddHeaders(HttpRequestMessage request)
+        {
+            if (_headers.Count > 0)
+            {
+                var er = _headers.GetEnumerator();
+                while (er.MoveNext())
+                {
+                    request.Headers.Add(er.Current.Key, er.Current.Value);
+                }
+            }
+        }
+
+        protected virtual string AttachParametersToSubUrl(string subUrl)
+        {
+            if (subUrl.IndexOf('{') > -1 && subUrl.IndexOf('}') > -1)
+            {
+                StringBuilder sb1 = new StringBuilder(subUrl);
+                var er1 = NameValues.GetEnumerator();
+                while (er1.MoveNext())
+                {
+                    sb1.Replace(string.Format("{{{0}}}", er1.Current.Key), er1.Current.Value);
+                }
+                subUrl = sb1.ToString(); sb1.Clear();
+            }
+            else
+            {
+                var er = NameValues.GetEnumerator();
+
+                StringBuilder sb = new StringBuilder();
+                while (er.MoveNext())
+                {
+                    if (sb.Length > 0)
+                        sb.Append("&");
+                    sb.Append(er.Current.Key + "=" + er.Current.Value);
+                }
+                if (sb.Length > 0)
+                {
+                    subUrl += "?" + sb.ToString();
+                }
+            }
+            return subUrl;
         }
 
         public static HttpPoster Create(string baseUrl, MethodType type, EventHandler<PostExceptionEventArg> exceptionAction)
@@ -156,6 +216,9 @@ namespace SSystem.Webapi.Core
                     break;
                 case MethodType.Post:
                     obj = new HttpPost();
+                    break;
+                case MethodType.PostAttachment:
+                    obj = new HttpPostAttachment();
                     break;
                 default:
                     throw new ArgumentException("cannot implement");

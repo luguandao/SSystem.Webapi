@@ -10,18 +10,16 @@ namespace SSystem.Webapi.Core.Posters
         {
             using (var client = new HttpClient())
             {
-                
                 client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
-                
-               // var content=new FormUrlEncodedContent(NameValues);
-
+              
                 var request = new HttpRequestMessage(HttpMethod.Post, BaseUrl + subUrl);
                 if (!string.IsNullOrWhiteSpace(SessionId))
                 {
                     request.Headers.Add("Cookie", string.Format("{0}={1}", SessionName, SessionId));
                 }
+
+                AddHeaders(request);
                 request.Content = new FormUrlEncodedContent(NameValues);
-               // return client.PostAsync(BaseUrl + subUrl, content).Result.Content.ReadAsStringAsync();
                 return client.SendAsync(request).Result.Content.ReadAsStringAsync();
             }
 

@@ -11,6 +11,7 @@ namespace SSystem.Webapi.Core
         Get,
         Put,
         Post,
+        PostAttachment,
         Delete
     }
 }
