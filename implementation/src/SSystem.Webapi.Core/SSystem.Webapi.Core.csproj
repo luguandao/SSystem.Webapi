@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="MethodType.cs" />
     <Compile Include="Models\StandardResult.cs" />
+    <Compile Include="Posters\HttpDelete.cs" />
     <Compile Include="Posters\HttpPost.cs" />
     <Compile Include="Posters\HttpPostAttachment.cs" />
     <Compile Include="PostException.cs" />

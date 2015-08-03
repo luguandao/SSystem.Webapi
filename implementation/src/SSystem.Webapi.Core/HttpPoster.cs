@@ -220,6 +220,9 @@ namespace SSystem.Webapi.Core
                 case MethodType.PostAttachment:
                     obj = new HttpPostAttachment();
                     break;
+                case MethodType.Delete:
+                    obj = new HttpDelete();
+                    break;
                 default:
                     throw new ArgumentException("cannot implement");
             }
