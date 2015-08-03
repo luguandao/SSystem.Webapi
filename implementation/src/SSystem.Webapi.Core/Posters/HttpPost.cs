@@ -19,7 +19,7 @@ namespace SSystem.Webapi.Core.Posters
                 }
 
                 AddHeaders(request);
-                request.Content = new FormUrlEncodedContent(NameValues);
+                request.Content = new FormUrlEncodedContent(ConvertToIEnumerable(_NameValues));
                 return client.SendAsync(request).Result.Content.ReadAsStringAsync();
             }
 
@@ -38,7 +38,7 @@ namespace SSystem.Webapi.Core.Posters
             {
                 client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
 
-                var content = new FormUrlEncodedContent(NameValues);
+                var content = new FormUrlEncodedContent(ConvertToIEnumerable(_NameValues));
 
                 var request = new HttpRequestMessage(HttpMethod.Post, BaseUrl + subUrl);
                 if (!string.IsNullOrWhiteSpace(SessionId))

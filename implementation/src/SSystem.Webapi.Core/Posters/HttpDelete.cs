@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -22,10 +23,12 @@ namespace SSystem.Webapi.Core.Posters
                 }
 
                 AddHeaders(request);
-                request.Content = new FormUrlEncodedContent(NameValues);
+                request.Content = new FormUrlEncodedContent(ConvertToIEnumerable(_NameValues));
                 return client.SendAsync(request).Result.Content.ReadAsStringAsync();
             }
         }
+
+       
 
         protected override string _Post(string subUrl)
         {
@@ -40,7 +43,7 @@ namespace SSystem.Webapi.Core.Posters
             {
                 client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
 
-                var content = new FormUrlEncodedContent(NameValues);
+                var content = new FormUrlEncodedContent(ConvertToIEnumerable(_NameValues));
 
                 var request = new HttpRequestMessage(HttpMethod.Delete, BaseUrl + subUrl);
                 if (!string.IsNullOrWhiteSpace(SessionId))

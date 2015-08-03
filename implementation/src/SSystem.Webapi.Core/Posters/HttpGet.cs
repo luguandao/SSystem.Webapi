@@ -52,14 +52,13 @@ namespace SSystem.Webapi.Core.Posters
         protected override byte[] _PostForResponse(string subUrl)
         {
             var url = BaseUrl + subUrl;
-            var er = NameValues.GetEnumerator();
 
             StringBuilder sb = new StringBuilder();
-            while (er.MoveNext())
+            foreach (var key in _NameValues.AllKeys)
             {
                 if (sb.Length > 0)
                     sb.Append("&");
-                sb.Append(er.Current.Key + "=" + er.Current.Value);
+                sb.Append(key + "=" + _NameValues.Get(key));
             }
             using (var handler = new HttpClientHandler {UseCookies = true})
             {

@@ -153,11 +153,11 @@ namespace SSystem.Webapi.Core
             return this;
         }
 
-        protected Dictionary<string, string> NameValues = new Dictionary<string, string>();
+        protected NameValueCollection _NameValues = new NameValueCollection();
 
         public HttpPoster AddParameter(string name, string value)
         {
-            NameValues.Add(name, value);
+            _NameValues.Add(name, value);
             return this;
         }
 
@@ -178,23 +178,22 @@ namespace SSystem.Webapi.Core
             if (subUrl.IndexOf('{') > -1 && subUrl.IndexOf('}') > -1)
             {
                 StringBuilder sb1 = new StringBuilder(subUrl);
-                var er1 = NameValues.GetEnumerator();
-                while (er1.MoveNext())
+                var er1 = _NameValues.GetEnumerator();
+                foreach (var key in _NameValues.AllKeys)
                 {
-                    sb1.Replace(string.Format("{{{0}}}", er1.Current.Key), er1.Current.Value);
+                    sb1.Replace(string.Format("{{{0}}}", key), _NameValues.Get(key));
                 }
+              
                 subUrl = sb1.ToString(); sb1.Clear();
             }
             else
             {
-                var er = NameValues.GetEnumerator();
-
                 StringBuilder sb = new StringBuilder();
-                while (er.MoveNext())
+                foreach (var key in _NameValues.AllKeys)
                 {
                     if (sb.Length > 0)
                         sb.Append("&");
-                    sb.Append(er.Current.Key + "=" + er.Current.Value);
+                    sb.Append(key + "=" + _NameValues.Get(key));
                 }
                 if (sb.Length > 0)
                 {
@@ -206,6 +205,7 @@ namespace SSystem.Webapi.Core
 
         public static HttpPoster Create(string baseUrl, MethodType type, EventHandler<PostExceptionEventArg> exceptionAction)
         {
+             
             if (string.IsNullOrWhiteSpace(baseUrl))
                 throw new ArgumentException("baseUrl cannot be empty.");
             HttpPoster obj;
@@ -241,5 +241,15 @@ namespace SSystem.Webapi.Core
         #region 返回结果
         public string ResultContent { get; set; }
         #endregion
+
+        protected static IEnumerable<KeyValuePair<string, string>> ConvertToIEnumerable(NameValueCollection nv)
+        {
+            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+            foreach (var key in nv.AllKeys)
+            {
+                result.Add(new KeyValuePair<string, string>(key, nv.Get(key)));
+            }
+            return result;
+        }
     }
 }
