@@ -15,6 +15,7 @@ namespace SSystem.Webapi.Core.Posters
             using (var client = new HttpClient())
             {
                 client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
+                client.DefaultRequestHeaders.Authorization = _BasicAuthorization;
 
                 var request = new HttpRequestMessage(HttpMethod.Delete, BaseUrl + subUrl);
                 if (!string.IsNullOrWhiteSpace(SessionId))
@@ -42,6 +43,7 @@ namespace SSystem.Webapi.Core.Posters
             using (var client = new HttpClient())
             {
                 client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
+                client.DefaultRequestHeaders.Authorization = _BasicAuthorization;
 
                 var content = new FormUrlEncodedContent(ConvertToIEnumerable(_NameValues));
 

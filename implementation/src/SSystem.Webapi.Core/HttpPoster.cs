@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SSystem.Webapi.Core.Models;
 using SSystem.Webapi.Core.Posters;
+using System.Net.Http.Headers;
 
 namespace SSystem.Webapi.Core
 {
@@ -24,6 +25,8 @@ namespace SSystem.Webapi.Core
         public MethodType Type { get; private set; }
 
         protected Dictionary<string, string> _headers = new Dictionary<string, string>();
+
+        protected AuthenticationHeaderValue _BasicAuthorization;
 
         protected string BaseUrl;
         public abstract Task<string> PostAsync(string subUrl);
@@ -94,6 +97,12 @@ namespace SSystem.Webapi.Core
             {
                 _headers.Add(name, value);
             }
+            return this;
+        }
+
+        public HttpPoster AddAuthorization(string scheme, string parameter)
+        {
+            _BasicAuthorization = new AuthenticationHeaderValue(scheme, parameter);
             return this;
         }
 

@@ -23,6 +23,8 @@ namespace SSystem.Webapi.Core.Posters
                 using (var client = new HttpClient(handler))
                 {
                     client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
+                    client.DefaultRequestHeaders.Authorization = _BasicAuthorization;
+
                               
                     var request = new HttpRequestMessage(HttpMethod.Get, url);
                     if (!string.IsNullOrWhiteSpace(SessionId))
@@ -31,6 +33,7 @@ namespace SSystem.Webapi.Core.Posters
                     }
 
                     AddHeaders(request);
+                   
 
                     var res = client.SendAsync(request).Result.Content;
 
@@ -69,6 +72,7 @@ namespace SSystem.Webapi.Core.Posters
                 using (var client = new HttpClient())
                 {
                     client.Timeout = new TimeSpan(0, 0, 0, 0, WaitTimeout);
+                    client.DefaultRequestHeaders.Authorization = _BasicAuthorization;
                     if (sb.Length > 0)
                     {
                         url += "?" + sb;
