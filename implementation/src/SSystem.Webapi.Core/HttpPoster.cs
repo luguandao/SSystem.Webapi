@@ -134,6 +134,7 @@ namespace SSystem.Webapi.Core
         {
             try
             {
+                RequestUrl = BaseUrl + subUrl;
                 OnStarting();
                 _stopwatch = Stopwatch.StartNew();
                 ResultContent = _Post(subUrl);
@@ -247,8 +248,11 @@ namespace SSystem.Webapi.Core
             return Create(baseUrl, type, null);
         }
 
+        #region 请求
+        public string RequestUrl { get; protected set; }
+        #endregion
         #region 返回结果
-        public string ResultContent { get; set; }
+        public string ResultContent { get; protected set; }
         #endregion
 
         protected static IEnumerable<KeyValuePair<string, string>> ConvertToIEnumerable(NameValueCollection nv)
